@@ -33,8 +33,20 @@ function shallowCopy(obj) {
  *    mergeObjects([{a: 1, b: 2}, {b: 3, c: 5}]) => {a: 1, b: 5, c: 5}
  *    mergeObjects([]) => {}
  */
-function mergeObjects(/* objects */) {
-  throw new Error('Not implemented');
+function mergeObjects(objects) {
+  const merged = {};
+
+  objects.forEach((object) => {
+    Object.entries(object).forEach(([key, value]) => {
+      if (Object.prototype.hasOwnProperty.call(merged, key)) {
+        merged[key] += value;
+      } else {
+        merged[key] = value;
+      }
+    });
+  });
+
+  return merged;
 }
 
 /**
@@ -50,10 +62,19 @@ function mergeObjects(/* objects */) {
  *    removeProperties({name: 'John', age: 30, city: 'New York'}, 'age') => {name: 'John', city: 'New York'}
  *
  */
-function removeProperties(/* obj, keys */) {
-  throw new Error('Not implemented');
-}
+function removeProperties(obj, keys) {
+  const objCopy = { ...obj };
 
+  const keysCopy = Array.isArray(keys) ? [...keys] : [keys];
+
+  keysCopy.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(objCopy, key)) {
+      delete objCopy[key];
+    }
+  });
+
+  return objCopy;
+}
 /**
  * Compares two source objects. Returns true if the objects are equal and false otherwise.
  * There are no nested objects.
@@ -256,8 +277,16 @@ function fromJSON(proto, json) {
  *      { country: 'Russia',  city: 'Saint Petersburg' }
  *    ]
  */
-function sortCitiesArray(/* arr */) {
-  throw new Error('Not implemented');
+function sortCitiesArray(arr) {
+  return arr.sort((a, b) => {
+    if (a.country < b.country) return -1;
+    if (a.country > b.country) return 1;
+
+    if (a.city < b.city) return -1;
+    if (a.city > b.city) return 1;
+
+    return 0;
+  });
 }
 
 /**
@@ -290,10 +319,22 @@ function sortCitiesArray(/* arr */) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
-}
+function group(array, keySelector, valueSelector) {
+  const resultMap = new Map();
 
+  array.forEach((item) => {
+    const key = keySelector(item);
+    const value = valueSelector(item);
+
+    if (resultMap.has(key)) {
+      resultMap.get(key).push(value);
+    } else {
+      resultMap.set(key, [value]);
+    }
+  });
+
+  return resultMap;
+}
 /**
  * Css selectors builder
  *
